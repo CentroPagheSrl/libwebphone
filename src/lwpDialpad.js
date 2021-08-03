@@ -366,7 +366,7 @@ export default class extends lwpRenderer {
             ) {
               this._libwebphone.getUserAgent().start();
             } else {
-              this.autoAction({ terminate: false });
+              this.autoAction({ terminate: false, redial: false });
             }
           },
         },
