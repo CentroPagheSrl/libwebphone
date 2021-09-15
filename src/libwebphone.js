@@ -50,6 +50,10 @@ export default class extends EventEmitter {
     this._libwebphone._emit("created", this._libwebphone);
   } //end of constructor
 
+  destroy() {
+    if (this._dialpad) this._dialpad.destroy();
+  }
+
   getCallControl() {
     return this._callControl;
   }

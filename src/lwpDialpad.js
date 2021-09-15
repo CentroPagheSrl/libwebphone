@@ -8,6 +8,7 @@ export default class extends lwpRenderer {
     super(libwebphone);
     this._libwebphone = libwebphone;
     this._emit = this._libwebphone._dialpadEvent;
+    this._keydownListener = this._keydownListener.bind(this);
     this._initProperties(config);
     this._initInternationalization(config.i18n || {});
     this._initEventBindings();
@@ -400,6 +401,42 @@ export default class extends lwpRenderer {
     this._target = [];
   }
 
+  _keydownListener(event) {
+
+    const key = event.key;
+    if (event.target != document.body) {
+      return;
+    }
+
+    switch (key) {
+      case "Enter":
+        if (this._config.keys["enter"].enabled) {
+          this._config.keys["enter"].action(event, this);
+        }
+        break;
+      case "Escape":
+        if (this._config.keys["escape"].enabled) {
+          this._config.keys["escape"].action(event, this);
+        }
+        break;
+      case "Backspace":
+        if (this._config.keys["backspace"].enabled) {
+          this._config.keys["backspace"].action(event, this);
+        }
+        break;
+      default:
+        if (key.length == 1) {
+          if (this._config.keys["dtmf"].enabled) {
+            this._config.keys["dtmf"].action(event, this);
+          }
+        }
+    }
+  }
+
+  destroy() {
+    document.removeEventListener("keydown", this._keydownListener);
+  }
+
   _initEventBindings() {
     this._libwebphone.on("call.primary.transfer.collecting", () => {
       this.clear();
@@ -435,38 +472,11 @@ export default class extends lwpRenderer {
     });
 
     if (this._config.globalKeyShortcuts) {
-      document.addEventListener("keydown", (event) => {
-        const key = event.key;
-        if (event.target != document.body) {
-          return;
-        }
-
-        switch (key) {
-          case "Enter":
-            if (this._config.keys["enter"].enabled) {
-              this._config.keys["enter"].action(event, this);
-            }
-            break;
-          case "Escape":
-            if (this._config.keys["escape"].enabled) {
-              this._config.keys["escape"].action(event, this);
-            }
-            break;
-          case "Backspace":
-            if (this._config.keys["backspace"].enabled) {
-              this._config.keys["backspace"].action(event, this);
-            }
-            break;
-          default:
-            if (key.length == 1) {
-              if (this._config.keys["dtmf"].enabled) {
-                this._config.keys["dtmf"].action(event, this);
-              }
-            }
-        }
-      });
+      document.addEventListener("keydown", this._keydownListener);
     }
   }
+
+  
 
   _initRenderTargets() {
     this._config.renderTargets.map((renderTarget) => {
