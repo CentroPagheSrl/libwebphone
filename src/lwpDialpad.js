@@ -390,7 +390,7 @@ export default class extends lwpRenderer {
         dtmf: {
           enabled: true,
           action: (event) => {
-            if (!this._getCall() || /^[0-9#*]$/.test(event.key)) {
+            if (!this._getCall() || /^[0-9#*+]$/.test(event.key)) {
               this.dial(event.key);
             }
           },
