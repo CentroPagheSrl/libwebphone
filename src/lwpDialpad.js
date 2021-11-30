@@ -137,7 +137,7 @@ export default class extends lwpRenderer {
 
     if (options.filter.enabled) {
       target = target.filter((char) => {
-        return /[0-9*#]/.test(char);
+        return /[0-9*#+]/.test(char);
       });
     }
 
